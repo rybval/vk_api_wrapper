@@ -1,0 +1,4 @@
+Recursively saves friendlists into database.
+(For future use to analyse of relationships)
+Using Python (maybe C++ in future), SQLite, grafic libraries for 
+visualisation

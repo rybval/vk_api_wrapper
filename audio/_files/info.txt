@@ -1,0 +1,5 @@
+﻿Дата добавления аудиозаписи хранитс¤ в формате UNIX timestamp в секундах
+Преобразование:
+>>> from datetime import datetime, timedelta
+>>> datetime(1970,1,1)+timedelta(seconds=1440014027)
+datetime.datetime(2015, 8, 19, 19, 53, 47)

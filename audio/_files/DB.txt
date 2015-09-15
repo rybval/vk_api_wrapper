@@ -1,0 +1,72 @@
+Initial DB:
+    Tables: 
+        audio:
+            id (INTEGER, PK, AI)
+            vk_audio_id (INTEGER)
+            vk_artist (TEXT)
+            vk_title (TEXT)
+            vk_genre_id (INTEGER) 
+            next_audio_id (INTEGER, FK (audio.id)) 
+                # Обеспечивает сохранение последовательности треков при
+                # переносе из вк.
+                # Не ясно как обрабатывать изменение последовательности треков
+                # при следующих дампах, поэтому учитываться будут только вновь
+                # добавленные треки.
+                # Последним считать тот трек, который ни на какой не ссылается,
+                # а первым — на который ни один не ссылается.
+                
+        album: 
+            id (INTEGER, PK, AI)
+            vk_album_id (INTEGER)
+            title (varchar)
+        
+        audio/album:
+            id (INTEGER, PK, AI)
+            track_id (INTEGER, fk (track.id))
+            album_id (INTEGER, fk (album.id))
+            
+        lyrics:
+            id (INTEGER, PK, AI)
+            vk_lyrics_id (INTEGER)
+            
+            
+            
+            
+Enchansed DB:
+    Tables: 
+        audio:
+            id (INTEGER, PK, AI)
+            vk_audio_id (INTEGER)
+            vk_lyrics_id (INTEGER)
+            vk_artist (varchar)
+            vk_title (varchar)
+    !       vk_genre (INTEGER) # найти способ переводить код в название жанра
+            ID3_title (varchar)
+            ID3_artist (varchar)
+    !           ID3_...
+            title (varchar)
+    !           artist (varchar) # пилить отдельную таблицу для исполнителей?
+    !           mp3 (blob) # Хранить в отдельных файлах рядом с DB
+            size (INTEGER, bytes)
+            hash_crc32 (varchar/blob)
+            hash_md5 (varchar/blob)
+            hash_sha1 (varchar/blob)
+            hash_sha256 (varchar/blob)
+            before_track (INTEGER, fk (track.id)) # обеспечивают сохранение последовательности треков
+            after_track (INTEGER, fk (track.id)) # но как сохранять целостность при новом дампе?
+                
+        album: 
+            id (INTEGER, PK, AI)
+            vk_album_id (INTEGER)
+!           vk_...
+            title (varchar)
+        
+        audio/album:
+            id (INTEGER, PK, AI)
+            track_id (INTEGER, fk (track.id))
+            album_id (INTEGER, fk (album.id))
+            
+        lyrics:
+            id (INTEGER, PK, AI)
+            vk_lyrics_id (INTEGER)
+        
