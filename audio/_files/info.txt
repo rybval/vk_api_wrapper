@@ -1,4 +1,4 @@
-﻿Дата добавления аудиозаписи хранитс¤ в формате UNIX timestamp в секундах
+﻿Дата добавления аудиозаписи хранится в формате UNIX timestamp в секундах
 Преобразование:
 >>> from datetime import datetime, timedelta
 >>> datetime(1970,1,1)+timedelta(seconds=1440014027)
