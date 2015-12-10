@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 *.mwb.bak
+*.mwb.xml.bak
 ERD.png
 ERD.pdf
 _old/VkAudioSync/downloads/
