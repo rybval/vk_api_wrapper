@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from http.cookiejar import CookieJar
@@ -8,26 +8,14 @@ from urllib.request import Request, build_opener, HTTPRedirectHandler, \
                            HTTPCookieProcessor # HTTPRedirectHandler?
 from getpass import getpass
 
-class AuthParams(dict):
-    
-    def __init__(self, client_id='4805647',
-            scope='notify,friends,photos,audio,video,docs,notes,'
-                  'pages,status,wall,groups,messages,email,'
-                  'notifications,stats,ads,offline',
-            display='mobile', 
-            response_type='token',
-            v='5.37', # Vk API version
-            redirect_uri='https://oauth.vk.com/blank.html'):
-            
-        paramsDict = {'client_id' : client_id, 'scope': scope,
-                'display': display, 'response_type': response_type,
-                'v': v, 'redirect_uri': redirect_uri}
-        dict.__init__(self, paramsDict)
-
-    def getAuthURL(self):
-        authurl = 'https://oauth.vk.com/authorize'
-        params = urlencode(self)   #'&'.join(key+'='+self[key] for key in self)
-        return authurl+'?'+params
+def getAuthURL(client_id, scope):
+    params = {'client_id': client_id, 
+              'scope': scope,
+              'display': 'mobile',
+              'response_type': 'token',
+              'v': '5.37',
+              'redirect_uri': 'https://oauth.vk.com/blank.html'}
+    return 'https://oauth.vk.com/authorize?'+urlencode(params)
              
 class AuthFormParser(HTMLParser):
     
@@ -75,16 +63,16 @@ class AuthFormParser(HTMLParser):
         self.method = "GET"
 
 
-def auth(email, password, 
+def auth(client_id, scope, email, password, 
          user_agent='Mozilla/5.0 (Windows NT 6.3; WOW64; rv:39.0)'
                                             ' Gecko/20100101 Firefox/39.0'):
     """Portable and quick emulator of brouser for Vk API authorisation."""
     user_agent = ('User-Agent', user_agent)
     opener = build_opener(HTTPCookieProcessor(CookieJar()))
     parser = AuthFormParser()
-    request = Request(AuthParams().getAuthURL())
-    request.add_header(*user_agent)
 
+    request = Request(getAuthURL(client_id, scope))
+    request.add_header(*user_agent)
     parser.feed(opener.open(request).read().decode('utf8'))
     request = Request(parser.url)
     request.add_header(*user_agent)
@@ -94,19 +82,25 @@ def auth(email, password,
         parser.params["pass"] = password
         data = urlencode(parser.params).encode('ascii')
         parser.clear()
-        parser.feed(opener.open(request, data).read().decode('utf8'))
-        request = Request(parser.url)
-        request.add_header(*user_agent)
-    data = urlencode(parser.params).encode('ascii')
-
-    return parse_qs(opener.open(request, data).geturl().split('#')[1])
-
-def getlogin():
-    return (input('email> '), getpass('pass> '))
+        response = opener.open(request, data)
+        if 'access_token' in response.geturl():
+            final_url = response.geturl()
+        else:  
+            parser.feed(response.read().decode('utf8'))  
+            request = Request(parser.url)
+            request.add_header(*user_agent)
+            data = urlencode(parser.params).encode('ascii')
+            final_url = opener.open(request, data).geturl()
+        return parse_qs(final_url.split('#')[1])
+    else:
+        raise Exception('Wrong page')
 
 if __name__ == '__main__':
     # Добавить обработку параметров командной строки
-    data = auth(*getlogin())
+    data = auth(input('client_id> '), 
+                input('scope> '), 
+                input('email> '), 
+                getpass('pass> '))
     for key in data:
         print('{0: <{2}}: {1}'.format(key, data[key], 
                                       max(len(k) for k in data)))
