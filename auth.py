@@ -66,7 +66,7 @@ class AuthFormParser(HTMLParser):
 def auth(client_id, scope, email, password, 
          user_agent='Mozilla/5.0 (Windows NT 6.3; WOW64; rv:39.0)'
                                             ' Gecko/20100101 Firefox/39.0'):
-    """Portable and quick emulator of brouser for Vk API authorisation."""
+    """Portable and quick emulator of browser for Vk API authorisation."""
     user_agent = ('User-Agent', user_agent)
     opener = build_opener(HTTPCookieProcessor(CookieJar()))
     parser = AuthFormParser()

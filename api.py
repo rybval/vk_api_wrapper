@@ -5,6 +5,9 @@ from urllib.request import urlopen, Request
 from urllib.parse import urlencode, parse_qs
 from json import loads
 
+MAX_CALLS_PER_SECOND = 3
+MIN_PAUSE_BETWEEN_CALLS = (1/MAX_CALLS_PER_SECOND)*1.01
+
 def call(method, user_agent='', **params):
     """ Any method from Vk API can be called, using this function """
     if 'v' not in params:
