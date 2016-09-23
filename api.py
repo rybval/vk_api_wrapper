@@ -4,14 +4,22 @@
 from urllib.request import urlopen, Request
 from urllib.parse import urlencode, parse_qs
 from json import loads
+import time
 
+API_VERSION = '5.37'
 MAX_CALLS_PER_SECOND = 3
-MIN_PAUSE_BETWEEN_CALLS = (1/MAX_CALLS_PER_SECOND)*1.01
+MIN_PAUSE_BETWEEN_CALLS = (1/MAX_CALLS_PER_SECOND)*1.02
+
+doc_types = ("текстовый документ", "архив", "gif", "изображение",
+             "аудио", "видео", "электронная книга", "неизвестно")
+
+def timeout(last_call_time):
+    time.sleep(MIN_PAUSE_BETWEEN_CALLS - (time.time() - last_call_time))
 
 def call(method, user_agent='', **params):
     """ Any method from Vk API can be called, using this function """
     if 'v' not in params:
-        params['v'] = '5.37'
+        params['v'] = API_VERSION
     url = 'https://api.vk.com/method/{0}?{1}'.format(method, urlencode(params))
     req = Request(url)
     req.add_header('User-Agent', user_agent)
@@ -24,7 +32,7 @@ def call(method, user_agent='', **params):
         raise Exception('Something wrong')
     else:
         return dictionary['response']
-        
+
 if __name__ == '__main__':
     method = input('Type API method title (example: utils.getServerTime)> ')
     params = input('Type params string (or just press "Enter")> ')
