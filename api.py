@@ -6,6 +6,9 @@ from urllib.parse import urlencode, parse_qs
 from json import loads
 import time
 
+__all__ = ('API_VERSION', 'MAX_CALLS_PER_SECOND', 'MIN_PAUSE_BETWEEN_CALLS',
+           'doc_types', 'timeout', 'call')
+
 API_VERSION = '5.37'
 MAX_CALLS_PER_SECOND = 3
 MIN_PAUSE_BETWEEN_CALLS = (1/MAX_CALLS_PER_SECOND)*1.02
