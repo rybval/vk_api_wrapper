@@ -13,7 +13,7 @@ API_VERSION = '5.37'
 MAX_CALLS_PER_SECOND = 3
 MIN_PAUSE_BETWEEN_CALLS = (1/MAX_CALLS_PER_SECOND)*1.02
 
-doc_types = ("текстовый документ", "архив", "gif", "изображение",
+doc_types = (None, "текстовый документ", "архив", "gif", "изображение",
              "аудио", "видео", "электронная книга", "неизвестно")
 
 def timeout(last_call_time):
