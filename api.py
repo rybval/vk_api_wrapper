@@ -16,8 +16,16 @@ MIN_PAUSE_BETWEEN_CALLS = (1/MAX_CALLS_PER_SECOND)*1.02
 doc_types = (None, "текстовый документ", "архив", "gif", "изображение",
              "аудио", "видео", "электронная книга", "неизвестно")
 
-def timeout(last_call_time):
-    time.sleep(MIN_PAUSE_BETWEEN_CALLS - (time.time() - last_call_time))
+def timeout(last_call_time=None):
+    """
+    Waits enough time to not let server throw
+    'too many requests per second' error.
+    """
+    if last_call_time is None:
+        last_call_time = time.time()
+    time_to_sleep = MIN_PAUSE_BETWEEN_CALLS - (time.time() - last_call_time)
+    if time_to_sleep > 0:
+        time.sleep(time_to_sleep)
 
 def call(method, user_agent='', **params):
     """ Any method from Vk API can be called, using this function """
